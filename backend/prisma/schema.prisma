@@ -1,0 +1,194 @@
+// NexLevel Speech - AI Voice Cloning SaaS Platform
+// Production-ready Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============== USERS ==============
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?   // Null for OAuth users
+  name          String?
+  avatarUrl     String?
+  googleId      String?   @unique
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  role          String    @default("USER") // USER, ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  subscription  Subscription?
+  credits       Credit?
+  voices        Voice[]
+  generations   Generation[]
+  payments      Payment[]
+  usageRecords  UsageRecord[]
+
+  @@index([email])
+  @@index([googleId])
+}
+
+// ============== PLANS ==============
+model Plan {
+  id              String   @id @default(uuid())
+  name            String   @unique  // starter, creator, pro
+  displayName     String             // "Starter", "Creator", "Pro"
+  description     String?
+  monthlyPricePKR Int                // Price in PKR
+  yearlyPricePKR  Int                // Yearly price (discounted)
+  creditsPerMonth Int                // Character credits
+  maxVoiceClones  Int                // Max voice clones allowed
+  features        String             // Feature list as JSON string
+  isActive        Boolean  @default(true)
+  isFree          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  subscriptions   Subscription[]
+
+  @@index([name])
+}
+
+// ============== SUBSCRIPTIONS ==============
+model Subscription {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  planId             String
+  status             String             @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED, PAST_DUE, TRIAL
+  billingCycle       String             @default("MONTHLY") // MONTHLY, YEARLY
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ============== CREDITS ==============
+model Credit {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  totalCredits Int      @default(0) // Total allocated for period
+  usedCredits  Int      @default(0) // Used in current period
+  bonusCredits Int      @default(0) // Extra bonus credits
+  lastResetAt  DateTime @default(now())
+  nextResetAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ============== VOICES ==============
+model Voice {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  description     String?
+  externalVoiceId String // ElevenLabs voice_id
+  provider        String   @default("ELEVENLABS") // ELEVENLABS, RESEMBLE_AI, PLAY_HT
+  sampleUrls      String   @default("[]") // JSON array as string
+  status          String   @default("PROCESSING") // PROCESSING, READY, FAILED, DELETED
+  consentGiven    Boolean  @default(false)
+  consentDate     DateTime?
+  metadata        String?  // JSON as string
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generations Generation[]
+
+  @@index([userId])
+  @@index([externalVoiceId])
+}
+
+// ============== GENERATIONS ==============
+model Generation {
+  id             String   @id @default(uuid())
+  userId         String
+  voiceId        String
+  text           String // Input text
+  characterCount Int // Characters used
+  language       String   @default("en")
+  audioUrl       String? // Generated audio URL
+  format         String   @default("MP3") // MP3, WAV, OGG
+  status         String   @default("PROCESSING") // PROCESSING, COMPLETED, FAILED
+  duration       Float? // Audio duration in seconds
+  creditsCost    Int // Credits deducted
+  errorMessage   String?
+  metadata       String?
+  createdAt      DateTime @default(now())
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  voice Voice @relation(fields: [voiceId], references: [id])
+
+  @@index([userId])
+  @@index([voiceId])
+  @@index([createdAt])
+}
+
+// ============== PAYMENTS ==============
+model Payment {
+  id                String    @id @default(uuid())
+  userId            String
+  amount            Int // Amount in PKR (paisa)
+  currency          String    @default("PKR")
+  provider          String    // JAZZCASH, EASYPAISA, PAYPAK, PAYBOST, MANUAL
+  providerTxnId     String? // External transaction ID
+  providerReference String? // Reference from provider
+  status            String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED, REFUNDED, CANCELLED
+  planId            String? // Plan being purchased
+  billingCycle      String?   // MONTHLY, YEARLY
+  metadata          String? // JSON string
+  failureReason     String?
+  receiptUrl        String? // For manual payments
+  paidAt            DateTime?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([providerTxnId])
+  @@index([status])
+}
+
+// ============== USAGE RECORDS ==============
+model UsageRecord {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // TTS_GENERATION, VOICE_CLONE, BONUS_CREDIT, SUBSCRIPTION_RESET
+  creditsUsed Int
+  description String?
+  referenceId String? // Generation ID or other reference
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}

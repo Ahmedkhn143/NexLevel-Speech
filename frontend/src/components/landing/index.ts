@@ -1,0 +1,8 @@
+export { default as Hero } from './Hero';
+export { default as ProductDemo } from './ProductDemo';
+export { default as HowItWorks } from './HowItWorks';
+export { default as UseCases } from './UseCases';
+export { default as Pricing } from './Pricing';
+export { default as CTA } from './CTA';
+export { default as Navbar } from './Navbar';
+export { default as Footer } from './Footer';
