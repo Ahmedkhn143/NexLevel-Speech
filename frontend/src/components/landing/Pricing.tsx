@@ -1,192 +1,310 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Check, Sparkles } from 'lucide-react';
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { Check, Sparkles, Zap, Crown, ArrowRight } from 'lucide-react';
 
 const plans = [
-    {
-        name: 'Free Trial',
-        price: { monthly: 0, yearly: 0 },
-        credits: '5,000',
-        features: [
-            '5,000 characters per month',
-            '1 voice clone',
-            'MP3 download',
-            'Email support',
-        ],
-        cta: 'Start Free',
-        popular: false,
-    },
-    {
-        name: 'Starter',
-        price: { monthly: 1500, yearly: 15000 },
-        credits: '50,000',
-        features: [
-            '50,000 characters per month',
-            '3 voice clones',
-            'MP3 & WAV download',
-            'Multilingual support',
-            'Email support',
-        ],
-        cta: 'Get Started',
-        popular: false,
-    },
-    {
-        name: 'Creator',
-        price: { monthly: 3500, yearly: 35000 },
-        credits: '200,000',
-        features: [
-            '200,000 characters per month',
-            '10 voice clones',
-            'All audio formats',
-            'Multilingual support',
-            'Priority support',
-            'API access',
-        ],
-        cta: 'Get Started',
-        popular: true,
-    },
-    {
-        name: 'Professional',
-        price: { monthly: 8000, yearly: 80000 },
-        credits: '500,000',
-        features: [
-            '500,000 characters per month',
-            'Unlimited voice clones',
-            'All audio formats',
-            'Multilingual support',
-            'Dedicated support',
-            'API access',
-            'Commercial license',
-            'Priority processing',
-        ],
-        cta: 'Contact Sales',
-        popular: false,
-    },
+  {
+    name: 'Starter',
+    price: 0,
+    period: 'forever',
+    description: 'Perfect for trying out the platform',
+    features: [
+      '10,000 characters/month',
+      '3 voice clones',
+      'Standard quality audio',
+      'API access',
+      'Community support',
+    ],
+    cta: 'Start Free',
+    popular: false,
+    gradient: 'from-gray-500 to-gray-600',
+  },
+  {
+    name: 'Pro',
+    price: 29,
+    period: '/month',
+    description: 'For creators and professionals',
+    features: [
+      '100,000 characters/month',
+      'Unlimited voice clones',
+      'Ultra HD audio quality',
+      'Priority API access',
+      'Advanced voice settings',
+      'Email support',
+      'Commercial license',
+    ],
+    cta: 'Get Pro',
+    popular: true,
+    gradient: 'from-[#00ffff] to-[#ff00ff]',
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    description: 'For teams and organizations',
+    features: [
+      'Unlimited characters',
+      'Unlimited voice clones',
+      'Custom voice training',
+      'Dedicated infrastructure',
+      'SLA guarantee',
+      '24/7 priority support',
+      'Custom integrations',
+      'On-premise deployment',
+    ],
+    cta: 'Contact Sales',
+    popular: false,
+    gradient: 'from-[#00ff00] to-[#00ffff]',
+  },
 ];
 
-export default function Pricing() {
-    const [isYearly, setIsYearly] = useState(false);
-
-    return (
-        <section id="pricing" className="py-24 relative bg-gray-950 z-10">
-            <div className="container">
-                {/* Section Header */}
-                <motion.div
-                    className="text-center mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                        Simple, Transparent <span className="gradient-text">Pricing</span>
-                    </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                        Choose the plan that fits your needs. All prices in Pakistani Rupees (PKR).
-                    </p>
-
-                    {/* Billing Toggle */}
-                    <div className="flex items-center justify-center gap-4">
-                        <span className={`text-sm ${!isYearly ? 'text-white' : 'text-gray-500'}`}>
-                            Monthly
-                        </span>
-                        <button
-                            onClick={() => setIsYearly(!isYearly)}
-                            className="relative w-14 h-7 rounded-full bg-gray-700 transition-colors"
-                            style={{
-                                background: isYearly
-                                    ? 'linear-gradient(135deg, hsl(220, 80%, 55%) 0%, hsl(270, 70%, 60%) 100%)'
-                                    : undefined,
-                            }}
-                        >
-                            <motion.div
-                                className="absolute top-1 w-5 h-5 rounded-full bg-white"
-                                animate={{ left: isYearly ? '32px' : '4px' }}
-                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                            />
-                        </button>
-                        <span className={`text-sm ${isYearly ? 'text-white' : 'text-gray-500'}`}>
-                            Yearly
-                            <span className="ml-2 text-xs text-green-400 font-medium">Save 17%</span>
-                        </span>
-                    </div>
-                </motion.div>
-
-                {/* Pricing Cards */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {plans.map((plan, index) => (
-                        <motion.div
-                            key={plan.name}
-                            className={`card relative flex flex-col h-full ${plan.popular
-                                ? 'border-2 border-purple-500 shadow-lg shadow-purple-500/20'
-                                : 'border border-gray-800'
-                                }`}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                        >
-                            {/* Popular Badge */}
-                            {plan.popular && (
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-xs font-semibold flex items-center gap-1 shadow-lg z-10 whitespace-nowrap">
-                                    <Sparkles className="w-3 h-3" />
-                                    Most Popular
-                                </div>
-                            )}
-
-                            <div className="flex-1">
-                                <div className="text-center mb-6 pt-4">
-                                    <h3 className="text-xl font-semibold mb-2 text-white">{plan.name}</h3>
-                                    <div className="flex items-baseline justify-center gap-1 text-white">
-                                        <span className="text-sm text-gray-400">PKR</span>
-                                        <span className="text-4xl font-bold">
-                                            {isYearly
-                                                ? (plan.price.yearly / 12).toLocaleString()
-                                                : plan.price.monthly.toLocaleString()}
-                                        </span>
-                                        <span className="text-gray-400">/mo</span>
-                                    </div>
-                                    {isYearly && plan.price.yearly > 0 && (
-                                        <p className="text-xs text-green-400 mt-1 font-medium">
-                                            Billed PKR {plan.price.yearly.toLocaleString()}/year
-                                        </p>
-                                    )}
-                                    <p className="text-sm text-gray-400 mt-2">
-                                        {plan.credits} characters/month
-                                    </p>
-                                </div>
-
-                                {/* Features */}
-                                <ul className="space-y-3 mb-8 px-2">
-                                    {plan.features.map((feature, i) => (
-                                        <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                                            <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                <Check className="w-3 h-3 text-green-500" />
-                                            </div>
-                                            <span className="leading-snug">{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* CTA */}
-                            <div className="mt-auto pt-4">
-                                <Link
-                                    href="/signup"
-                                    className={`w-full block text-center py-3 rounded-xl font-semibold transition-all duration-300 ${plan.popular
-                                        ? 'btn-primary shadow-lg shadow-primary/25 hover:shadow-primary/40'
-                                        : 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-700'
-                                        }`}
-                                >
-                                    {plan.cta}
-                                </Link>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+// 3D Pricing Card
+const PricingCard3D = ({ 
+  plan, 
+  index 
+}: { 
+  plan: typeof plans[0]; 
+  index: number;
+}) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(cardRef, { once: true, margin: '-50px' });
+  
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 150, damping: 15 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 150, damping: 15 });
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+  
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+  
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 50, rotateX: -10 }}
+      animate={isInView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      className="perspective-container h-full"
+    >
+      <motion.div
+        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className={`relative h-full ${plan.popular ? 'z-10' : ''}`}
+      >
+        {/* Popular badge */}
+        {plan.popular && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="absolute -top-4 left-1/2 -translate-x-1/2 z-20"
+          >
+            <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-neon-cyan to-neon-magenta">
+              <Crown className="w-4 h-4 text-black" />
+              <span className="text-sm font-bold text-black">Most Popular</span>
             </div>
-        </section>
-    );
+          </motion.div>
+        )}
+        
+        {/* Glow effect for popular */}
+        {plan.popular && (
+          <div className="absolute -inset-[2px] bg-gradient-to-r from-neon-cyan via-neon-magenta to-neon-lime rounded-3xl blur-lg opacity-50" />
+        )}
+        
+        {/* Card */}
+        <div 
+          className={`relative h-full rounded-2xl overflow-hidden ${
+            plan.popular 
+              ? 'bg-gradient-to-b from-surface/90 to-surface border-2 border-neon-cyan/50' 
+              : 'glass border border-white/10'
+          }`}
+        >
+          {/* Top gradient line */}
+          <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${plan.gradient}`} />
+          
+          {/* Content */}
+          <div className="p-8 h-full flex flex-col">
+            {/* Plan name */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-foreground mb-2">{plan.name}</h3>
+              <p className="text-sm text-muted-foreground">{plan.description}</p>
+            </div>
+            
+            {/* Price */}
+            <div className="mb-8">
+              <div className="flex items-baseline gap-1">
+                {typeof plan.price === 'number' ? (
+                  <>
+                    <span className="text-sm text-muted-foreground">$</span>
+                    <span className={`text-5xl font-bold ${plan.popular ? 'gradient-text' : 'text-foreground'}`}>
+                      {plan.price}
+                    </span>
+                  </>
+                ) : (
+                  <span className={`text-4xl font-bold gradient-text`}>
+                    {plan.price}
+                  </span>
+                )}
+                <span className="text-muted-foreground ml-1">{plan.period}</span>
+              </div>
+            </div>
+            
+            {/* Features */}
+            <ul className="space-y-4 mb-8 flex-1">
+              {plan.features.map((feature, i) => (
+                <motion.li
+                  key={feature}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.3 + i * 0.05 }}
+                  className="flex items-start gap-3"
+                >
+                  <div className={`flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r ${plan.gradient} flex items-center justify-center mt-0.5`}>
+                    <Check className="w-3 h-3 text-black" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">{feature}</span>
+                </motion.li>
+              ))}
+            </ul>
+            
+            {/* CTA Button */}
+            <Link href={plan.price === 0 ? '/signup' : '/signup?plan=' + plan.name.toLowerCase()}>
+              <motion.button
+                className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
+                  plan.popular
+                    ? 'bg-gradient-to-r from-neon-cyan to-neon-magenta text-black hover:shadow-[0_0_30px_rgba(0,255,255,0.3)]'
+                    : 'border border-white/20 text-foreground hover:border-neon-cyan/50 hover:text-neon-cyan'
+                }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {plan.popular && <Zap className="w-4 h-4" />}
+                {plan.cta}
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default function Pricing() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [isAnnual, setIsAnnual] = useState(true);
+  
+  return (
+    <section ref={sectionRef} id="pricing" className="relative py-32 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 gradient-mesh opacity-30" />
+      <div className="absolute inset-0 cyber-grid opacity-15" />
+      
+      {/* Floating elements */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+        className="absolute top-1/4 -left-20 w-96 h-96 border border-neon-cyan/10 rounded-full"
+      />
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+        className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] border border-neon-magenta/10 rounded-full"
+      />
+      
+      <div className="container mx-auto px-4 sm:px-6 relative">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-neon-magenta/30 mb-6"
+          >
+            <Sparkles className="w-4 h-4 text-neon-magenta" />
+            <span className="text-sm font-medium text-neon-magenta">Simple, Transparent Pricing</span>
+          </motion.div>
+          
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.1 }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6"
+          >
+            <span className="text-foreground">Choose your </span>
+            <span className="gradient-text">plan</span>
+          </motion.h2>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-muted-foreground"
+          >
+            Start free and scale as you grow. No hidden fees.
+          </motion.p>
+          
+          {/* Billing Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.3 }}
+            className="flex items-center justify-center gap-4 mt-8"
+          >
+            <span className={`text-sm ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className="relative w-14 h-7 rounded-full bg-surface border border-white/10"
+            >
+              <motion.div
+                className="absolute top-1 w-5 h-5 rounded-full bg-gradient-to-r from-neon-cyan to-neon-magenta"
+                animate={{ left: isAnnual ? '32px' : '4px' }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </button>
+            <span className={`text-sm ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Annual
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-neon-lime/20 text-neon-lime text-xs">
+                Save 20%
+              </span>
+            </span>
+          </motion.div>
+        </div>
+        
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+          {plans.map((plan, index) => (
+            <PricingCard3D key={plan.name} plan={plan} index={index} />
+          ))}
+        </div>
+        
+        {/* Bottom note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1 }}
+          className="text-center text-sm text-muted-foreground mt-12"
+        >
+          All plans include 14-day money-back guarantee. No questions asked.
+        </motion.p>
+      </div>
+    </section>
+  );
 }

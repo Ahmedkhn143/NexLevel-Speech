@@ -12,6 +12,7 @@ import { TtsModule } from './modules/tts';
 import { PaymentModule } from './modules/payment';
 import { UsageModule } from './modules/usage';
 import { DemoModule } from './modules/demo/demo.module';
+import { QueueModule } from './modules/queue';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { DemoModule } from './modules/demo/demo.module';
     // Core modules
     PrismaModule,
     StorageModule,
+    QueueModule,
 
     // Feature modules
     AuthModule,

@@ -192,3 +192,34 @@ model UsageRecord {
   @@index([type])
   @@index([createdAt])
 }
+
+// ============== JOBS (Async Processing Queue) ==============
+model Job {
+  id            String    @id @default(uuid())
+  userId        String
+  type          String    // TTS_GENERATION, VOICE_CLONE
+  status        String    @default("PENDING") // PENDING, RESERVED, PROCESSING, COMPLETED, FAILED, CANCELLED
+  priority      Int       @default(0) // Higher = more priority
+  payload       String    // JSON payload with job data
+  result        String?   // JSON result data
+  errorMessage  String?
+  attempts      Int       @default(0)
+  maxAttempts   Int       @default(3)
+  progress      Int       @default(0) // 0-100 percentage
+  creditsReserved Int     @default(0) // Credits reserved for this job
+  
+  // References
+  generationId  String?   @unique // Link to Generation if TTS job
+  
+  // Timing
+  scheduledAt   DateTime  @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@index([scheduledAt])
+}

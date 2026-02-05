@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -101,6 +102,43 @@ async function main() {
     ]);
 
     console.log(`✅ Created ${plans.length} plans`);
+
+    // Create Test User
+    const hashedPassword = await bcrypt.hash('Test123456', 12);
+    
+    const testUser = await prisma.user.upsert({
+        where: { email: 'test@example.com' },
+        update: {},
+        create: {
+            email: 'test@example.com',
+            password: hashedPassword,
+            name: 'Test User',
+            isActive: true,
+            subscription: {
+                create: {
+                    planId: plans[0].id, // Free plan
+                    status: 'TRIAL',
+                    billingCycle: 'MONTHLY',
+                    currentPeriodStart: new Date(),
+                    currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                },
+            },
+            credits: {
+                create: {
+                    totalCredits: plans[0].creditsPerMonth,
+                    usedCredits: 0,
+                    bonusCredits: 0,
+                    nextResetAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                },
+            },
+        },
+        include: {
+            subscription: true,
+            credits: true,
+        },
+    });
+
+    console.log(`✅ Created test user: ${testUser.email}`);
 
     console.log('🎉 Database seeding completed!');
 }

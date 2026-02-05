@@ -1,168 +1,175 @@
 'use client';
 
-import React, { forwardRef, useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label?: string;
-    error?: string;
-    icon?: React.ReactNode;
-    iconRight?: React.ReactNode;
-    helperText?: string;
+  label?: string;
+  error?: string;
+  icon?: React.ReactNode;
+  glow?: boolean;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ label, error, icon, iconRight, helperText, className = '', type, ...props }, ref) => {
-        const [showPassword, setShowPassword] = useState(false);
-        const isPassword = type === 'password';
-        const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, icon, glow = true, className = '', type, ...props }, ref) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const isPassword = type === 'password';
 
-        return (
-            <div className="w-full space-y-1.5">
-                {label && (
-                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">
-                        {label}
-                    </label>
-                )}
-
-                <div className="relative group">
-                    {icon && (
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-400 transition-colors duration-200">
-                            {icon}
-                        </span>
-                    )}
-
-                    <input
-                        ref={ref}
-                        type={inputType}
-                        className={`
-                            w-full bg-gray-900/50 
-                            border ${error ? 'border-red-500/50' : 'border-gray-700/50'} 
-                            rounded-xl 
-                            py-3.5 
-                            ${icon ? 'pl-12' : 'pl-4'} 
-                            ${isPassword || iconRight ? 'pr-12' : 'pr-4'}
-                            text-gray-100 
-                            placeholder:text-gray-500
-                            focus:outline-none 
-                            focus:border-blue-500/50 
-                            focus:ring-2 
-                            focus:ring-blue-500/20
-                            focus:bg-gray-900/70
-                            hover:border-gray-600/50
-                            transition-all duration-200
-                            font-medium
-                            ${className}
-                        `}
-                        {...props}
-                    />
-
-                    {isPassword && (
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
-                        >
-                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                    )}
-
-                    {iconRight && !isPassword && (
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
-                            {iconRight}
-                        </span>
-                    )}
-                </div>
-
-                <AnimatePresence mode="wait">
-                    {error && (
-                        <motion.p
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            className="text-red-400 text-sm ml-1 flex items-center gap-1"
-                        >
-                            <span className="w-1 h-1 rounded-full bg-red-400" />
-                            {error}
-                        </motion.p>
-                    )}
-                    {helperText && !error && (
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-gray-500 text-sm ml-1"
-                        >
-                            {helperText}
-                        </motion.p>
-                    )}
-                </AnimatePresence>
+    return (
+      <div className="space-y-2">
+        {label && (
+          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {label}
+          </label>
+        )}
+        
+        <div className="relative group">
+          {/* Glow effect on focus */}
+          {glow && (
+            <motion.div
+              className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-neon-cyan to-neon-magenta blur-sm opacity-0 transition-opacity duration-300"
+              animate={{ opacity: isFocused ? 0.3 : 0 }}
+            />
+          )}
+          
+          {/* Icon */}
+          {icon && (
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${
+              isFocused ? 'text-neon-cyan' : 'text-muted-foreground'
+            }`}>
+              {icon}
             </div>
-        );
-    }
+          )}
+          
+          {/* Input */}
+          <input
+            ref={ref}
+            type={isPassword ? (showPassword ? 'text' : 'password') : type}
+            className={`
+              relative w-full bg-surface border rounded-xl py-3 
+              text-foreground placeholder:text-muted-foreground
+              transition-all duration-300
+              focus:outline-none focus:ring-0
+              ${icon ? 'pl-11' : 'pl-4'}
+              ${isPassword ? 'pr-12' : 'pr-4'}
+              ${error 
+                ? 'border-red-500/50 focus:border-red-500' 
+                : 'border-white/10 focus:border-neon-cyan/50'
+              }
+              ${glow && isFocused ? 'shadow-[0_0_15px_rgba(0,255,255,0.15)]' : ''}
+              ${className}
+            `}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...props}
+          />
+          
+          {/* Password toggle */}
+          {isPassword && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          )}
+        </div>
+        
+        {/* Error message */}
+        <AnimatePresence mode="wait">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="flex items-center gap-2 text-sm text-red-400"
+            >
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
 );
 
 Input.displayName = 'Input';
 
-// Textarea variant
+// Textarea Component
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-    label?: string;
-    error?: string;
-    helperText?: string;
+  label?: string;
+  error?: string;
+  glow?: boolean;
 }
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({ label, error, helperText, className = '', ...props }, ref) => {
-        return (
-            <div className="w-full space-y-1.5">
-                {label && (
-                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">
-                        {label}
-                    </label>
-                )}
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ label, error, glow = true, className = '', ...props }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
 
-                <textarea
-                    ref={ref}
-                    className={`
-                        w-full bg-gray-900/50 
-                        border ${error ? 'border-red-500/50' : 'border-gray-700/50'} 
-                        rounded-xl 
-                        py-3.5 px-4
-                        text-gray-100 
-                        placeholder:text-gray-500
-                        focus:outline-none 
-                        focus:border-blue-500/50 
-                        focus:ring-2 
-                        focus:ring-blue-500/20
-                        focus:bg-gray-900/70
-                        hover:border-gray-600/50
-                        transition-all duration-200
-                        font-medium
-                        resize-none
-                        min-h-[120px]
-                        ${className}
-                    `}
-                    {...props}
-                />
-
-                <AnimatePresence mode="wait">
-                    {error && (
-                        <motion.p
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            className="text-red-400 text-sm ml-1"
-                        >
-                            {error}
-                        </motion.p>
-                    )}
-                    {helperText && !error && (
-                        <p className="text-gray-500 text-sm ml-1">{helperText}</p>
-                    )}
-                </AnimatePresence>
-            </div>
-        );
-    }
+    return (
+      <div className="space-y-2">
+        {label && (
+          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {label}
+          </label>
+        )}
+        
+        <div className="relative group">
+          {/* Glow effect on focus */}
+          {glow && (
+            <motion.div
+              className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-neon-cyan to-neon-magenta blur-sm opacity-0 transition-opacity duration-300"
+              animate={{ opacity: isFocused ? 0.3 : 0 }}
+            />
+          )}
+          
+          <textarea
+            ref={ref}
+            className={`
+              relative w-full bg-surface border rounded-xl py-3 px-4
+              text-foreground placeholder:text-muted-foreground
+              transition-all duration-300 resize-none
+              focus:outline-none focus:ring-0
+              ${error 
+                ? 'border-red-500/50 focus:border-red-500' 
+                : 'border-white/10 focus:border-neon-cyan/50'
+              }
+              ${glow && isFocused ? 'shadow-[0_0_15px_rgba(0,255,255,0.15)]' : ''}
+              ${className}
+            `}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...props}
+          />
+        </div>
+        
+        {/* Error message */}
+        <AnimatePresence mode="wait">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="flex items-center gap-2 text-sm text-red-400"
+            >
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
 );
 
 Textarea.displayName = 'Textarea';
+
+export { Input, Textarea };

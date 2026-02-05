@@ -1,4 +1,5 @@
 export { default as Hero } from './Hero';
+export { default as Features } from './Features';
 export { default as ProductDemo } from './ProductDemo';
 export { default as HowItWorks } from './HowItWorks';
 export { default as UseCases } from './UseCases';
