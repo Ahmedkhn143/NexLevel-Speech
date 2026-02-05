@@ -1,58 +1,67 @@
-import { Module, Global } from '@nestjs/common';
-import { BullModule } from '@nestjs/bullmq';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { QueueService } from './queue.service';
-import { TtsProcessor } from './processors/tts.processor';
+import { Module, Global, Logger } from '@nestjs/common';
 import { JobService } from './job.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { StorageModule } from '../../storage/storage.module';
-import { TTS_QUEUE, VOICE_CLONE_QUEUE } from './queue.constants';
 
+// Export the interfaces for type compatibility
+export interface TtsJobData {
+  jobId: string;
+  userId: string;
+  generationId: string;
+  voiceId: string;
+  externalVoiceId: string;
+  text: string;
+  language: string;
+  characterCount: number;
+  creditsReserved: number;
+}
+
+export interface VoiceCloneJobData {
+  jobId: string;
+  userId: string;
+  voiceId: string;
+  name: string;
+  sampleUrls: string[];
+}
+
+/**
+ * Mock Queue Service for development without Redis
+ * In production, uncomment the BullMQ configuration and use the real QueueService
+ */
 @Global()
 @Module({
-  imports: [
-    PrismaModule,
-    StorageModule,
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          host: configService.get('REDIS_HOST', 'localhost'),
-          port: configService.get('REDIS_PORT', 6379),
-          password: configService.get('REDIS_PASSWORD', undefined),
-          maxRetriesPerRequest: null,
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    BullModule.registerQueue(
-      { 
-        name: TTS_QUEUE,
-        defaultJobOptions: {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 1000,
+  imports: [PrismaModule, StorageModule],
+  providers: [
+    {
+      provide: 'QueueService',
+      useFactory: () => {
+        const logger = new Logger('MockQueueService');
+        logger.warn('Queue running in SYNC mode - Redis not required for development');
+        logger.warn('Async TTS generation will not be available');
+        
+        return {
+          async addTtsJob(data: TtsJobData): Promise<any> {
+            logger.log(`[SYNC MODE] TTS job skipped: ${data.jobId} - use sync endpoint`);
+            return { id: data.jobId, data };
           },
-          removeOnComplete: 100,
-          removeOnFail: 50,
-        },
-      },
-      { 
-        name: VOICE_CLONE_QUEUE,
-        defaultJobOptions: {
-          attempts: 2,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
+          async addVoiceCloneJob(data: VoiceCloneJobData): Promise<any> {
+            logger.log(`[SYNC MODE] Voice clone job skipped: ${data.jobId}`);
+            return { id: data.jobId, data };
           },
-          removeOnComplete: 50,
-          removeOnFail: 25,
-        },
+          async getTtsQueueStatus() {
+            return { waiting: 0, active: 0, completed: 0, failed: 0 };
+          },
+          async getTtsJob(jobId: string): Promise<any> {
+            return undefined;
+          },
+          async cancelTtsJob(jobId: string): Promise<boolean> {
+            return false;
+          },
+        };
       },
-    ),
+    },
+    JobService,
   ],
-  providers: [QueueService, JobService, TtsProcessor],
-  exports: [QueueService, JobService, BullModule],
+  exports: ['QueueService', JobService],
 })
 export class QueueModule {}

@@ -1,4 +1,4 @@
 export * from './queue.constants';
 export * from './queue.module';
-export * from './queue.service';
 export * from './job.service';
+// Note: queue.service.ts is kept for reference when Redis is available

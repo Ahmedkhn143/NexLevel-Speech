@@ -4,14 +4,24 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AIProviderFactory } from '../../ai-providers';
 import { StorageService } from '../../storage/storage.service';
-import { QueueService, TtsJobData } from '../queue/queue.service';
+import { TtsJobData } from '../queue/queue.module';
 import { JobService } from '../queue/job.service';
 import { GenerateSpeechDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
+
+// Define the queue service interface
+interface IQueueService {
+  addTtsJob(data: TtsJobData): Promise<any>;
+  addVoiceCloneJob(data: any): Promise<any>;
+  getTtsQueueStatus(): Promise<any>;
+  getTtsJob(jobId: string): Promise<any>;
+  cancelTtsJob(jobId: string): Promise<boolean>;
+}
 
 @Injectable()
 export class TtsService {
@@ -19,7 +29,7 @@ export class TtsService {
     private prisma: PrismaService,
     private aiProviderFactory: AIProviderFactory,
     private storageService: StorageService,
-    private queueService: QueueService,
+    @Inject('QueueService') private queueService: IQueueService,
     private jobService: JobService,
   ) {}
 
