@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Mic, Check, Sparkles, Pause, Loader2, Volume2, Wand2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -61,7 +62,7 @@ export default function ProductDemo() {
             // Call Demo API with timeout for better UX
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
-            
+
             const response = await fetch(`${API_URL}/demo/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -72,7 +73,7 @@ export default function ProductDemo() {
                 }),
                 signal: controller.signal
             });
-            
+
             clearTimeout(timeoutId);
 
             if (!response.ok) {
@@ -232,23 +233,16 @@ export default function ProductDemo() {
                             </div>
 
                             <div className="mt-auto space-y-4">
-                                <button
+                                <Button
                                     onClick={handleGenerate}
                                     disabled={isGenerating || !typedText}
-                                    className="w-full btn-primary py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="w-full"
+                                    size="lg"
+                                    loading={isGenerating}
+                                    icon={!isGenerating && <Sparkles className="w-4 h-4" />}
                                 >
-                                    {isGenerating ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            Generating...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Sparkles className="w-4 h-4" />
-                                            Generate Speech
-                                        </>
-                                    )}
-                                </button>
+                                    {isGenerating ? 'Generating Speech' : 'Generate Speech'}
+                                </Button>
 
                                 <AnimatePresence mode="wait">
                                     {(audioUrl || isGenerating) && (

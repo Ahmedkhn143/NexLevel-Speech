@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
+    children?: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
     size?: 'sm' | 'md' | 'lg';
     loading?: boolean;
@@ -12,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     glow?: boolean;
 }
 
-export const Button = ({
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     children,
     variant = 'primary',
     size = 'md',
@@ -23,7 +24,7 @@ export const Button = ({
     className = '',
     disabled,
     ...props
-}: ButtonProps) => {
+}, ref) => {
     const baseStyles = `
         inline-flex items-center justify-center rounded-xl font-semibold 
         transition-all duration-300 ease-out
@@ -74,6 +75,7 @@ export const Button = ({
 
     return (
         <motion.button
+            ref={ref}
             whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
             className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${glowStyles} ${className}`}
             disabled={loading || disabled}
@@ -102,4 +104,6 @@ export const Button = ({
             )}
         </motion.button>
     );
-};
+});
+
+Button.displayName = 'Button';
