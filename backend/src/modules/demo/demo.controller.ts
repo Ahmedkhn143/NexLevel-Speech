@@ -73,15 +73,15 @@ export class DemoController {
     const duration = 0.5; // 0.5 seconds
     const frequency = 440; // A4 note
     const numSamples = Math.floor(sampleRate * duration);
-    
+
     // WAV header + data
     const buffer = Buffer.alloc(44 + numSamples * 2);
-    
+
     // RIFF header
     buffer.write('RIFF', 0);
     buffer.writeUInt32LE(36 + numSamples * 2, 4);
     buffer.write('WAVE', 8);
-    
+
     // fmt chunk
     buffer.write('fmt ', 12);
     buffer.writeUInt32LE(16, 16); // chunk size
@@ -91,11 +91,11 @@ export class DemoController {
     buffer.writeUInt32LE(sampleRate * 2, 28); // byte rate
     buffer.writeUInt16LE(2, 32); // block align
     buffer.writeUInt16LE(16, 34); // bits per sample
-    
+
     // data chunk
     buffer.write('data', 36);
     buffer.writeUInt32LE(numSamples * 2, 40);
-    
+
     // Generate sine wave
     for (let i = 0; i < numSamples; i++) {
       const t = i / sampleRate;

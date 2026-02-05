@@ -6,12 +6,12 @@ import { Sparkles, Zap, Globe, Shield } from 'lucide-react';
 
 export default function Hero() {
     return (
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 md:pt-32">
             {/* Background Effects */}
             <div className="absolute inset-0 overflow-hidden">
                 {/* Animated Gradient Mesh */}
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-gray-950 to-gray-950" />
-                
+
                 {/* Floating Orbs */}
                 <motion.div
                     className="absolute w-[800px] h-[800px] rounded-full blur-3xl"
@@ -48,9 +48,9 @@ export default function Hero() {
                         delay: 2,
                     }}
                 />
-                
+
                 {/* Grid Pattern */}
-                <div 
+                <div
                     className="absolute inset-0 opacity-[0.02]"
                     style={{
                         backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
@@ -67,14 +67,14 @@ export default function Hero() {
 
             <div className="container relative z-10">
                 <motion.div
-                    className="text-center max-w-5xl mx-auto"
+                    className="text-center max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-10"
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
                     {/* Badge */}
                     <motion.div
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 mb-8"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.2 }}
@@ -87,7 +87,7 @@ export default function Hero() {
 
                     {/* Main Heading */}
                     <motion.h1
-                        className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight"
+                        className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
@@ -101,26 +101,26 @@ export default function Hero() {
 
                     {/* Description */}
                     <motion.p
-                        className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed"
+                        className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                     >
                         Create ultra-realistic AI voice clones from just a few samples.
-                        Generate natural-sounding speech in <span className="text-white font-medium">29+ languages</span> for 
+                        Generate natural-sounding speech in <span className="text-white font-medium">29+ languages</span> for
                         content creation, accessibility, and beyond.
                     </motion.p>
 
                     {/* CTA Buttons */}
                     <motion.div
-                        className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+                        className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
                     >
-                        <Link 
-                            href="/signup" 
-                            className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-semibold text-white text-lg shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
+                        <Link
+                            href="/signup"
+                            className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-semibold text-white text-lg shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             Get Started Free
                             <svg
@@ -137,9 +137,9 @@ export default function Hero() {
                                 />
                             </svg>
                         </Link>
-                        <a 
-                            href="#demo" 
-                            className="group px-8 py-4 bg-white/5 backdrop-blur border border-white/10 rounded-2xl font-semibold text-white text-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2"
+                        <a
+                            href="#demo"
+                            className="group px-8 py-4 bg-white/5 backdrop-blur border border-white/10 rounded-2xl font-semibold text-white text-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <svg
                                 className="w-5 h-5 text-blue-400"
@@ -154,7 +154,7 @@ export default function Hero() {
 
                     {/* Feature Pills */}
                     <motion.div
-                        className="flex flex-wrap items-center justify-center gap-4 mb-16"
+                        className="flex flex-wrap items-center justify-center gap-4"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6 }}
@@ -164,8 +164,8 @@ export default function Hero() {
                             { icon: Globe, text: '29+ Languages' },
                             { icon: Shield, text: 'Enterprise Security' },
                         ].map((item, i) => (
-                            <div 
-                                key={i} 
+                            <div
+                                key={i}
                                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"
                             >
                                 <item.icon className="w-4 h-4 text-blue-400" />
@@ -176,7 +176,7 @@ export default function Hero() {
 
                     {/* Stats */}
                     <motion.div
-                        className="grid grid-cols-3 gap-8 max-w-2xl mx-auto"
+                        className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-4"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.7 }}
@@ -204,7 +204,7 @@ export default function Hero() {
                 transition={{ duration: 2, repeat: Infinity }}
             >
                 <div className="w-6 h-10 rounded-full border-2 border-gray-600 flex items-start justify-center p-2">
-                    <motion.div 
+                    <motion.div
                         className="w-1.5 h-1.5 bg-gray-400 rounded-full"
                         animate={{ y: [0, 12, 0] }}
                         transition={{ duration: 2, repeat: Infinity }}

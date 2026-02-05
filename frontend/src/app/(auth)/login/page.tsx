@@ -33,7 +33,7 @@ export default function LoginPage() {
 
             setTokens(data.accessToken, data.refreshToken);
             setUser(data.user);
-            router.push('/dashboard');
+            router.push('/app/dashboard');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Invalid email or password');
         } finally {

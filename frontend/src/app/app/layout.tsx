@@ -93,8 +93,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                                        ? 'bg-primary/10 text-primary font-medium shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                                    ? 'bg-primary/10 text-primary font-medium shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                                     }`}
                                 title={!isSidebarOpen ? item.label : ''}
                             >
@@ -182,10 +182,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Main Content Area */}
             <main
-                className={`flex-1 transition-all duration-300 pt-16 lg:pt-0 ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-20'
+                className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-20'
                     }`}
             >
-                <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={pathname}
@@ -224,8 +224,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                         href={item.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center gap-3 px-4 py-4 rounded-xl text-lg ${pathname === item.href
-                                                ? 'bg-primary/10 text-primary'
-                                                : 'text-muted-foreground'
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'text-muted-foreground'
                                             }`}
                                     >
                                         <item.icon className="w-6 h-6" />

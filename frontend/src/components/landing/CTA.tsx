@@ -6,9 +6,9 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function CTA() {
     return (
-        <section className="py-24 relative overflow-hidden">
+        <section className="py-24 relative overflow-hidden bg-gray-900 z-0">
             {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-primary/20" />
+            <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-primary/20 pointer-events-none" />
 
             {/* Animated Shapes */}
             <motion.div

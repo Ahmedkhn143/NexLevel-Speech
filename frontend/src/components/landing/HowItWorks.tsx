@@ -26,7 +26,7 @@ const steps = [
 
 export default function HowItWorks() {
     return (
-        <section id="how-it-works" className="py-24 relative">
+        <section id="how-it-works" className="py-24 relative bg-gray-950 z-10">
             <div className="container">
                 {/* Section Header */}
                 <motion.div
@@ -44,7 +44,7 @@ export default function HowItWorks() {
                 </motion.div>
 
                 {/* Steps */}
-                <div className="grid md:grid-cols-3 gap-8 relative">
+                <div className="grid-features relative">
                     {/* Connection Line */}
                     <div className="absolute top-24 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 hidden md:block opacity-30" />
 

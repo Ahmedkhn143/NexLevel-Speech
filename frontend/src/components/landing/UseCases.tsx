@@ -44,7 +44,7 @@ const useCases = [
 
 export default function UseCases() {
     return (
-        <section id="use-cases" className="py-24 bg-gray-900/50">
+        <section id="features" className="py-24 bg-gray-900/50 relative z-10">
             <div className="container">
                 {/* Section Header */}
                 <motion.div
@@ -62,7 +62,7 @@ export default function UseCases() {
                 </motion.div>
 
                 {/* Use Cases Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid-features">
                     {useCases.map((useCase, index) => (
                         <motion.div
                             key={useCase.title}

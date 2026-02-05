@@ -17,7 +17,7 @@ export class TtsService {
     private prisma: PrismaService,
     private aiProviderFactory: AIProviderFactory,
     private storageService: StorageService,
-  ) { }
+  ) {}
 
   async generateSpeech(userId: string, generateSpeechDto: GenerateSpeechDto) {
     const { voiceId, text, language, format } = generateSpeechDto;
@@ -28,10 +28,10 @@ export class TtsService {
     // Check for Preset Voices (System Voices)
     if (voiceId.startsWith('pre_')) {
       const PRESETS = {
-        'pre_rachel': '21m00Tcm4TlvDq8ikWAM',
-        'pre_drew': '29vD33N1CtxCmqQRPOHJ',
-        'pre_clyde': '2EiwWnXFnvU5JabPnv8n',
-        'pre_mimi': 'zrHiDhphv9ZnVXBqCLjz',
+        pre_rachel: '21m00Tcm4TlvDq8ikWAM',
+        pre_drew: '29vD33N1CtxCmqQRPOHJ',
+        pre_clyde: '2EiwWnXFnvU5JabPnv8n',
+        pre_mimi: 'zrHiDhphv9ZnVXBqCLjz',
       };
 
       if (PRESETS[voiceId]) {
@@ -40,7 +40,7 @@ export class TtsService {
           name: 'System Voice',
           externalVoiceId: PRESETS[voiceId],
           provider: 'ELEVENLABS',
-          status: 'READY'
+          status: 'READY',
         };
       } else {
         throw new NotFoundException('Invalid system voice ID');

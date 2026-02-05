@@ -181,7 +181,7 @@ export class PaymentService {
               tx,
               payment.userId,
               payment.planId,
-              payment.billingCycle as string,
+              payment.billingCycle,
             );
           }
         });

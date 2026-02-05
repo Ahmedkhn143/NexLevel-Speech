@@ -26,11 +26,10 @@ export default function Navbar() {
 
     return (
         <motion.header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-                isScrolled 
-                    ? 'bg-gray-950/80 backdrop-blur-xl border-b border-white/5 py-3' 
-                    : 'py-5'
-            }`}
+            className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-500 ${isScrolled
+                    ? 'bg-gray-950/80 backdrop-blur-xl border-b border-white/5'
+                    : ''
+                }`}
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
@@ -70,8 +69,8 @@ export default function Navbar() {
                         >
                             Log in
                         </Link>
-                        <Link 
-                            href="/signup" 
+                        <Link
+                            href="/signup"
                             className="px-5 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all"
                         >
                             Get Started

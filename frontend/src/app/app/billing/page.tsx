@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuthStore } from '@/stores';
 import { motion } from 'framer-motion';
-import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const PLANS = [
@@ -51,8 +50,6 @@ export default function BillingPage() {
             // window.location.href = data.redirectUrl; // or handle response
 
             // Ideally we show a Modal to pick "JazzCash" or "EasyPaisa" or "Manual".
-            // Since I haven't built that modal fully yet, I'll log.
-            console.log('Upgrade to', planId);
             toast.error("Payment integration requires provider selection. (Implemented in backend, frontend UI pending)");
 
         } catch (error) {

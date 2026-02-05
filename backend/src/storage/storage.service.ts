@@ -21,7 +21,9 @@ export class StorageService {
     }
 
     // Ensure upload directory exists
-    fs.mkdir(this.uploadDir, { recursive: true }).catch(err => console.error('Failed to create upload dir', err));
+    fs.mkdir(this.uploadDir, { recursive: true }).catch((err) =>
+      console.error('Failed to create upload dir', err),
+    );
   }
 
   async uploadAudio(buffer: Buffer, filePath: string): Promise<string> {
@@ -51,7 +53,10 @@ export class StorageService {
     }
   }
 
-  private async uploadToLocal(buffer: Buffer, filePath: string): Promise<string> {
+  private async uploadToLocal(
+    buffer: Buffer,
+    filePath: string,
+  ): Promise<string> {
     try {
       // Flatten path for simplicty or maintain structure
       // Generates/userId/file.mp3 -> userId_file.mp3 to avoid nested folder complexity or just create folders
@@ -62,12 +67,16 @@ export class StorageService {
       await fs.writeFile(finalPath, buffer);
 
       // Return valid URL
-      const baseUrl = this.configService.get<string>('API_URL') || 'http://localhost:3001';
+      const baseUrl =
+        this.configService.get<string>('API_URL') || 'http://localhost:3001';
       // ServeStatic serves 'uploads' folder at '/uploads'
       return `${baseUrl}/uploads/${distinctPath}`;
     } catch (error) {
       console.error('Local upload failed:', error);
-      throw new HttpException('Failed to save file locally', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to save file locally',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

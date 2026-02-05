@@ -58,4 +58,4 @@ import { DemoModule } from './modules/demo/demo.module';
     DemoModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

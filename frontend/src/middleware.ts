@@ -7,9 +7,8 @@ export function middleware(request: NextRequest) {
     const token = request.cookies.get('accessToken')?.value;
 
     if (!token) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/login'
-        return NextResponse.redirect(url)
+        // Redirect to login page (note: uses root route, not /auth/login)
+        return NextResponse.redirect(new URL('/login', request.url))
     }
 
     return NextResponse.next()

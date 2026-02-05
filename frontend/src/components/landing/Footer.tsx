@@ -38,7 +38,7 @@ const socialLinks = [
 
 export default function Footer() {
     return (
-        <footer className="border-t border-gray-800 pt-16 pb-8">
+        <footer className="bg-gray-950 border-t border-gray-800 pt-16 pb-8 relative z-10">
             <div className="container">
                 <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
                     {/* Brand */}
